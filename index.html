@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hike Me App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #a7ffeb 30%, #e0f7fa 90%);
+            margin: 0;
+        }
+
+        #login-form, #register-form, #car-registration-form {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            width: 250px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        input, select {
+            width: calc(100% - 16px);
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #00796b;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 5px 8px;
+            font-size: 12px;
+            transition: background-color 0.3s, transform 0.2s;
+            width: auto;
+            margin-top: 15px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        button:hover {
+            background-color: #004d40;
+            transform: translateY(-2px);
+        }
+
+        h1, h2 {
+            color: #00796b;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            text-align: center;
+        }
+
+        .social-media {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .social-icon {
+            margin: 0 5px;
+            color: #00796b;
+            font-size: 24px;
+            text-decoration: none;
+        }
+
+        .social-icon:hover {
+            color: #004d40;
+        }
+
+        .sidebar-menu {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-link {
+            display: block;
+            margin: 5px 0;
+            text-decoration: none;
+            color: #00796b;
+        }
+
+        .sidebar-link:hover {
+            text-decoration: underline;
+        }
+
+        #driver-details-display, #car-details-display {
+            display: none;
+            margin-top: 20px;
+        }
+
+        #car-details-display p {
+            margin: 5px 0;
+        }
+
+        img {
+            max-width: 100%;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-form">
+        <h1><i class="fas fa-hiking"></i> Hike Me!</h1>
+        <h2>Login</h2>
+        <select id="role-login" required>
+            <option value="hiker">Hiker</option>
+            <option value="driver">Driver</option>
+        </select>
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button onclick="login()">Login</button>
+        <div class="link">
+            <a href="#" onclick="showRegister()">Register</a>
+        </div>
+        <div class="social-media">
+            <a href="https://www.facebook.com/" target="_blank" class="social-icon"><i class="fab fa-facebook"></i></a>
+            <a href="https://twitter.com/login" target="_blank" class="social-icon"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.instagram.com/accounts/login/" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+            <a href="https://wa.me/" target="_blank" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://www.tiktok.com/login" target="_blank" class="social-icon"><i class="fab fa-tiktok"></i></a>
+        </div>
+    </div>
+
+    <div id="register-form" style="display: none;">
+        <h2>Register</h2>
+        <input type="text" id="reg-username" placeholder="Username" required>
+        <input type="email" id="reg-email" placeholder="Email" required>
+        <input type="password" id="reg-password" placeholder="Password" required>
+        <select id="role" required>
+            <option value="hiker">Hiker</option>
+            <option value="driver">Driver</option>
+        </select>
+        <button onclick="register()">Register</button>
+        <div class="link">
+            <a href="#" onclick="showLogin()">Back to Login</a>
+        </div>
+    </div>
+
+    <div id="container" style="display: none;">
+        <div id="sidebar">
+            <div id="driver-sidebar" style="display: none;" class="sidebar-menu">
+                <h2>Driver Menu</h2>
+                <a href="#" class="sidebar-link" onclick="showContent('driver-details')"><i class="fas fa-user"></i> Driver Details</a>
+                <a href="#" class="sidebar-link" onclick="showContent('car-registration')"><i class="fas fa-car"></i> Car Registration</a>
+                <a href="#" class="sidebar-link" onclick="showContent('driver-trips')"><i class="fas fa-route"></i> Trips</a>
+                <a href="#" class="sidebar-link" onclick="showContent('maps')"><i class="fas fa-map"></i> Maps</a>
+                <a href="#" class="sidebar-link" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+
+            <div id="hiker-sidebar" style="display: none;" class="sidebar-menu">
+                <h2>Hiker Menu</h2>
+                <a href="#" class="sidebar-link" onclick="showContent('search-trips')"><i class="fas fa-search"></i> Search for a Trip</a>
+                <a href="#" class="sidebar-link" onclick="showContent('request-trip')"><i class="fas fa-paper-plane"></i> Request a Trip</a>
+                <a href="#" class="sidebar-link" onclick="showContent('payments')"><i class="fas fa-money-bill"></i> Payments</a>
+                <a href="#" class="sidebar-link" onclick="showContent('account-settings')"><i class="fas fa-cog"></i> Account Settings</a>
+                <a href="#" class="sidebar-link" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+
+        <div id="main-content">
+            <div id="driver-details-content" style="display: none;">
+                <h2>Driver Details</h2>
+                <input type="text" id="driver-name" placeholder="Name" required>
+                <input type="text" id="driver-surname" placeholder="Surname" required>
+                <input type="email" id="driver-email" placeholder="Email" required>
+                <input type="file" id="driver-profile-pic" accept="image/*">
+                <button onclick="saveDriverDetails()">Save Driver Details</button>
+
+                <div id="driver-details-display">
+                    <h3>Saved Driver Details:</h3>
+                    <p>Name: <span id="display-name"></span></p>
+                    <p>Surname: <span id="display-surname"></span></p>
+                    <p>Email: <span id="display-email"></span></p>
+                    <img id="display-profile-pic" style="display:none;" />
+                </div>
+            </div>
+
+            <div id="car-registration-content" style="display: none;">
+                <h2>Car Registration</h2>
+                <input type="text" id="car-make" placeholder="Car Make" required>
+                <input type="text" id="car-model" placeholder="Car Model" required>
+                <input type="text" id="car-year" placeholder="Year of Manufacture" required>
+                <input type="text" id="car-plate" placeholder="License Plate" required>
+                <input type="file" id="car-picture" accept="image/*">
+                <button onclick="saveCarDetails()">Register Car</button>
+
+                <div id="car-details-display">
+                    <h3>Saved Car Details:</h3>
+                    <p>Make: <span id="display-car-make"></span></p>
+                    <p>Model: <span id="display-car-model"></span></p>
+                    <p>Year: <span id="display-car-year"></span></p>
+                    <p>Plate: <span id="display-car-plate"></span></p>
+                    <img id="display-car-picture" style="display:none;" />
+                </div>
+            </div>
+
+            <div id="driver-trips-content" style="display: none;">
+                <h2>Create a Trip</h2>
+                <input type="text" id="trip-destination" placeholder="Destination" required>
+                <input type="date" id="trip-date" required>
+                <input type="number" id="trip-capacity" placeholder="Capacity" required>
+                <button onclick="createTrip()">Create Trip</button>
+
+                <div id="trip-results" style="margin-top: 20px;"></div>
+            </div>
+
+            <div id="search-trips-content" style="display: none;">
+                <h2>Search for Trips</h2>
+                <input type="text" id="search-destination" placeholder="Destination" required>
+                <button onclick="searchTrips()">Search Trips</button>
+                
+                <div id="search-results" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample user data for authentication
+        const users = {
+            hiker: {},
+            driver: {}
+        };
+
+        const trips = []; // Array to hold created trips
+
+        function showLogin() {
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('register-form').style.display = 'none';
+            document.getElementById('container').style.display = 'none';
+        }
+
+        function showRegister() {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('register-form').style.display = 'block';
+            document.getElementById('container').style.display = 'none';
+        }
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role-login').value;
+
+            // Authentication check
+            if (users[role][username] && users[role][username].password === password) {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('register-form').style.display = 'none';
+                document.getElementById('container').style.display = 'block';
+                if (role === 'driver') {
+                    document.getElementById('driver-sidebar').style.display = 'block';
+                    document.getElementById('hiker-sidebar').style.display = 'none';
+                    showContent('driver-details');
+                } else {
+                    document.getElementById('hiker-sidebar').style.display = 'block';
+                    document.getElementById('driver-sidebar').style.display = 'none';
+                    showContent('search-trips');
+                }
+            } else {
+                alert('Invalid username or password');
+            }
+        }
+
+        function register() {
+            const username = document.getElementById('reg-username').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const role = document.getElementById('role').value;
+
+            if (username && email && password) {
+                users[role][username] = { email, password };
+                alert(`Registered successfully!\nUsername: ${username}\nEmail: ${email}\nRole: ${role}`);
+                showLogin(); // Go back to login after registration
+            } else {
+                alert('Please fill in all fields.');
+            }
+        }
+
+        function logout() {
+            document.getElementById('container').style.display = 'none';
+            showLogin();
+        }
+
+        function showContent(content) {
+            document.getElementById('driver-details-content').style.display = 'none';
+            document.getElementById('car-registration-content').style.display = 'none';
+            document.getElementById('driver-trips-content').style.display = 'none';
+            document.getElementById('search-trips-content').style.display = 'none';
+            document.getElementById('driver-details-display').style.display = 'none';
+            document.getElementById('car-details-display').style.display = 'none';
+
+            if (content === 'driver-details') {
+                document.getElementById('driver-details-content').style.display = 'block';
+            } else if (content === 'car-registration') {
+                document.getElementById('car-registration-content').style.display = 'block';
+            } else if (content === 'driver-trips') {
+                document.getElementById('driver-trips-content').style.display = 'block';
+            } else if (content === 'search-trips') {
+                document.getElementById('search-trips-content').style.display = 'block';
+            }
+        }
+
+        function createTrip() {
+            const destination = document.getElementById('trip-destination').value;
+            const date = document.getElementById('trip-date').value;
+            const capacity = document.getElementById('trip-capacity').value;
+
+            trips.push({ destination, date, capacity });
+            alert('Trip created successfully!');
+
+            document.getElementById('trip-destination').value = '';
+            document.getElementById('trip-date').value = '';
+            document.getElementById('trip-capacity').value = '';
+
+            displayTrips(); // Display trips after creating one
+        }
+
+        function displayTrips() {
+            const resultsContainer = document.getElementById('trip-results');
+            resultsContainer.innerHTML = ''; // Clear previous results
+            trips.forEach(trip => {
+                const tripElement = document.createElement('div');
+                tripElement.className = 'trip-item';
+                tripElement.innerHTML = `<strong>Destination:</strong> ${trip.destination}<br><strong>Date:</strong> ${trip.date}<br><strong>Capacity:</strong> ${trip.capacity}`;
+                resultsContainer.appendChild(tripElement);
+            });
+        }
+
+        function searchTrips() {
+            const searchDestination = document.getElementById('search-destination').value.toLowerCase();
+            const searchResultsContainer = document.getElementById('search-results');
+            searchResultsContainer.innerHTML = ''; // Clear previous results
+
+            const filteredTrips = trips.filter(trip => trip.destination.toLowerCase().includes(searchDestination));
+
+            if (filteredTrips.length > 0) {
+                filteredTrips.forEach(trip => {
+                    const tripElement = document.createElement('div');
+                    tripElement.className = 'trip-item';
+                    tripElement.innerHTML = `<strong>Destination:</strong> ${trip.destination}<br><strong>Date:</strong> ${trip.date}<br><strong>Capacity:</strong> ${trip.capacity}`;
+                    searchResultsContainer.appendChild(tripElement);
+                });
+            } else {
+                searchResultsContainer.innerHTML = '<p>No trips found.</p>';
+            }
+        }
+
+        function saveDriverDetails() {
+            const name = document.getElementById('driver-name').value;
+            const surname = document.getElementById('driver-surname').value;
+            const email = document.getElementById('driver-email').value;
+            const profilePic = document.getElementById('driver-profile-pic').files[0];
+
+            document.getElementById('display-name').textContent = name;
+            document.getElementById('display-surname').textContent = surname;
+            document.getElementById('display-email').textContent = email;
+
+            if (profilePic) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('display-profile-pic').src = e.target.result;
+                    document.getElementById('display-profile-pic').style.display = 'block';
+                };
+                reader.readAsDataURL(profilePic);
+            }
+
+            document.getElementById('driver-details-display').style.display = 'block';
+        }
+
+        function saveCarDetails() {
+            const carMake = document.getElementById('car-make').value;
+            const carModel = document.getElementById('car-model').value;
+            const carYear = document.getElementById('car-year').value;
+            const carPlate = document.getElementById('car-plate').value;
+            const carPicture = document.getElementById('car-picture').files[0];
+
+            document.getElementById('display-car-make').textContent = carMake;
+            document.getElementById('display-car-model').textContent = carModel;
+            document.getElementById('display-car-year').textContent = carYear;
+            document.getElementById('display-car-plate').textContent = carPlate;
+
+            if (carPicture) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('display-car-picture').src = e.target.result;
+                    document.getElementById('display-car-picture').style.display = 'block';
+                };
+                reader.readAsDataURL(carPicture);
+            }
+
+            document.getElementById('car-details-display').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
